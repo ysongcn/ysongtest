@@ -1,0 +1,50 @@
+.collection-header {
+	padding: 1em;
+	background: bisque;
+}
+.collection-item:hover {
+	background-color: #e0f2f1;
+}
+
+.hidden-btn {
+	position: absolute; 
+	left: -9999px; 
+	width: 1px; 
+	height: 1px;
+}
+
+.avatar{
+    padding-left:10px !important;
+ }
+.chip{
+  margin-left:5px;
+}
+ .owners {
+  margin-left: 50px;
+ }
+
+.modal{
+  max-height:85%;
+  overflow-x:hidden;
+}
+
+.hint{
+  margin-right: 20px;
+  color: #aaa;
+}
+
+.right-done-button{
+position: absolute;
+  right: 1px;
+}
+
+
+#toast-container {
+  top: 40%;
+  right: 45%;
+  max-width: 86%;
+}
+
+.toast{
+  background:#F35252;
+}
