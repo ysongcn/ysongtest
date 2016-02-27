@@ -22,7 +22,7 @@ public class Application {
 
     public static void main(String[] args) {
         //web server settings
-        port(9000);
+        port(getEnvPort());
         staticFileLocation("/client/public");
         threadPool(/* maxThreads */ 8, /* minThreads */ 2, /* timeOutMillis */ 30000);
         dbMigration();
@@ -69,4 +69,13 @@ public class Application {
         FreeMarkerEngine isWeb = new FreeMarkerEngine(c);
         // for now nothing
     }
+
+    static int getEnvPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
+
 }
