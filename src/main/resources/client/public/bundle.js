@@ -19662,7 +19662,7 @@
 	var DataList = __webpack_require__(171);
 	var ApiStub = __webpack_require__(173);
 	var Actions = __webpack_require__(162);
-
+	var config = __webpack_require__(169);
 	function getContactsState() {
 	  return {
 	    allContacts: ApiStub.getAll(),
@@ -19748,7 +19748,7 @@
 	  _initializeContacts: function () {
 
 	    var contacts = [];
-	    var api = "http://localhost:9000/api/v1/company";
+	    var api = config.apibase + "/company";
 	    fetch(api).then(function (resp) {
 	      return resp.json();
 	    }).then(function (result) {
@@ -20567,10 +20567,10 @@
 /***/ function(module, exports) {
 
 	var apiversion = 'v1';
-	var serverDomain = 'http://localhost:9000';
-	var devServerDomain = 'http://localhost:9000';
+	var serverDomain = ''; //'https://ysongtest.herokuapp.com/';
+	var devServerDomain = ''; //http://localhost:9000';
 
-	var prod = false;
+	var prod = true;
 
 	module.exports = {
 	    apibase: (prod ? serverDomain : devServerDomain) + "/api/" + apiversion

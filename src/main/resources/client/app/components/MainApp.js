@@ -5,7 +5,7 @@ var EditForm = require('./EditForm');
 var DataList = require('./DataList');
 var ApiStub = require('../ApiStub');
 var Actions = require('../Actions');
-
+var config = require('../config')
 function getContactsState() {
   return {
     allContacts: ApiStub.getAll(),
@@ -81,7 +81,7 @@ var MainApp = React.createClass({
 
 
     var contacts = [];
-    var api = "http://localhost:9000/api/v1/company";
+    var api = config.apibase + "/company";
     fetch(api).then(function(resp){ return resp.json();}).then(function(result){
 
       contacts = result.list;
