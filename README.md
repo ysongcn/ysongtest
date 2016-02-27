@@ -26,3 +26,63 @@ if your dont have webpack installed, using this command
 `mvn heroku:deploy`
 
 
+### API test
+
+all avaliabel APIs
+
+|   RESOURCE           |  METHOD |  DESCIPTION             |
+|----------------------|---------|-------------------------|
+| /api/(v1)/company    |   GET   | Fetch all company data  |
+| /api/(v1)/company/:id|   GET   | Get company data by id  |
+| /api/(v1)/company    |   POST  | Create new company      |
+| /api/(v1)/company    |   PUT   | Modify company          |
+| /api/(v1)/company/:id|   DELETE| Remove a company        |
+| /api/(v1)/owner      |   POST  | Add a owner             |
+| /api/(v1)/owner/:id  |   DELETE| Remove a owner          |
+
+Test using curl:
+
+*get all companys*
+
+`curl -X GET -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company`
+
+
+*get one company detail*
+
+`curl -X GET  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
+
+
+*create a company*
+
+`curl -X POST -H "Content-Type: application/json" 
+  -d '{	address: "test address",
+		city: "test city",
+		country: "test country",
+		email: "test@some.com",
+		name: "test company",
+		owner: "ysong,1;andy,2;",
+		phone: "13300000000"
+		}'
+  https://ysongtest.herokuapp.com/api/v1/company`
+  
+  
+  
+*remove a company*
+
+`curl -X DELETE  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
+
+
+
+*update a company*
+
+`curl -X PUT -H "Content-Type: application/json" 
+  -d '{	id:"1",
+    address: "test address",
+		city: "test city",
+		country: "test country",
+		email: "test@some.com",
+		name: "test company",
+		owner: "ysong,1;andy,2;",
+		phone: "13300000000"
+		}'
+  https://ysongtest.herokuapp.com/api/v1/company`
