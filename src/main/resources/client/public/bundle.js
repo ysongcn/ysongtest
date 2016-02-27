@@ -19658,9 +19658,9 @@
 	var React = __webpack_require__(1);
 	var Navbar = __webpack_require__(160);
 	var AddForm = __webpack_require__(161);
-	var EditForm = __webpack_require__(169);
-	var DataList = __webpack_require__(170);
-	var ApiStub = __webpack_require__(172);
+	var EditForm = __webpack_require__(170);
+	var DataList = __webpack_require__(171);
+	var ApiStub = __webpack_require__(173);
 	var Actions = __webpack_require__(162);
 
 	function getContactsState() {
@@ -19810,7 +19810,7 @@
 
 	var React = __webpack_require__(1);
 	var Actions = __webpack_require__(162);
-	var config = __webpack_require__(175);
+	var config = __webpack_require__(169);
 	var AddForm = React.createClass({
 	  displayName: 'AddForm',
 
@@ -20564,11 +20564,25 @@
 
 /***/ },
 /* 169 */
+/***/ function(module, exports) {
+
+	var apiversion = 'v1';
+	var serverDomain = 'http://localhost:9000';
+	var devServerDomain = 'http://localhost:9000';
+
+	var prod = false;
+
+	module.exports = {
+	    apibase: (prod ? serverDomain : devServerDomain) + "/api/" + apiversion
+	};
+
+/***/ },
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var Actions = __webpack_require__(162);
-	var config = __webpack_require__(175);
+	var config = __webpack_require__(169);
 
 	var EditForm = React.createClass({
 	  displayName: 'EditForm',
@@ -20854,11 +20868,11 @@
 	module.exports = EditForm;
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Detail = __webpack_require__(171);
+	var Detail = __webpack_require__(172);
 
 	var DataList = React.createClass({
 		displayName: 'DataList',
@@ -20880,7 +20894,7 @@
 	module.exports = DataList;
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -20929,15 +20943,15 @@
 	module.exports = Detail;
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var AppDispatcher = __webpack_require__(163);
-	var EventEmitter = __webpack_require__(173).EventEmitter;
+	var EventEmitter = __webpack_require__(174).EventEmitter;
 	var Constants = __webpack_require__(167);
-	var assign = __webpack_require__(174);
-	var config = __webpack_require__(175);
+	var assign = __webpack_require__(175);
+	var config = __webpack_require__(169);
 
 	var CHANGE_EVENT = 'change';
 
@@ -21124,7 +21138,7 @@
 	module.exports = ApiStub;
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -21428,7 +21442,7 @@
 
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21469,20 +21483,6 @@
 		return to;
 	};
 
-
-/***/ },
-/* 175 */
-/***/ function(module, exports) {
-
-	var apiversion = 'v1';
-	var serverDomain = 'http://localhost:9000';
-	var devServerDomain = 'http://localhost:9000';
-
-	var prod = false;
-
-	module.exports = {
-	    apibase: (prod ? serverDomain : devServerDomain) + "/api/" + apiversion
-	};
 
 /***/ }
 /******/ ]);
