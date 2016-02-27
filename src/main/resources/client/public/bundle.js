@@ -19675,6 +19675,8 @@
 
 	  getInitialState: function () {
 	    // load from server
+	    $("#none").hide();
+	    $("#loading").show();
 
 	    this._initializeContacts();
 	    return getContactsState();
@@ -19713,7 +19715,30 @@
 	      React.createElement(Navbar, null),
 	      React.createElement(DataList, { data: this.state.allContacts }),
 	      React.createElement(AddForm, null),
-	      React.createElement(EditForm, { editContact: this.state.editContact })
+	      React.createElement(EditForm, { editContact: this.state.editContact }),
+	      React.createElement(
+	        'div',
+	        { id: 'loading', className: 'preloader-wrapper small active' },
+	        React.createElement(
+	          'div',
+	          { className: 'spinner-layer spinner-green-only' },
+	          React.createElement(
+	            'div',
+	            { className: 'circle-clipper left' },
+	            React.createElement('div', { className: 'circle' })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'gap-patch' },
+	            React.createElement('div', { className: 'circle' })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'circle-clipper right' },
+	            React.createElement('div', { clasclassNames: 'circle' })
+	          )
+	        )
+	      )
 	    );
 	  },
 
@@ -19721,42 +19746,23 @@
 	    this.setState(getContactsState());
 	  },
 	  _initializeContacts: function () {
-	    // loading imaginary contacts
-	    // can also be loaded from a remote server
-	    var contacts = [{
-	      id: 1,
-	      name: 'Terrence S. Hatfield',
-	      phone: '651-603-1723',
-	      email: 'TerrenceSHatfield@rhyta.com'
-	    }, {
-	      id: 2,
-	      name: 'Chris M. Manning',
-	      phone: '513-307-5859',
-	      email: 'ChrisMManning@dayrep.com'
-	    }, {
-	      id: 3,
-	      name: 'Ricky M. Digiacomo',
-	      phone: '918-774-0199',
-	      email: 'RickyMDigiacomo@teleworm.us'
-	    }, {
-	      id: 4,
-	      name: 'Michael K. Bayne',
-	      phone: '702-989-5145',
-	      email: 'MichaelKBayne@rhyta.com'
-	    }, {
-	      id: 5,
-	      name: 'John I. Wilson',
-	      phone: '318-292-6700',
-	      email: 'JohnIWilson@dayrep.com'
-	    }, {
-	      id: 6,
-	      name: 'Rodolfo P. Robinett',
-	      phone: '803-557-9815',
-	      email: 'RodolfoPRobinett@jourrapide.com'
-	    }];
 
-	    contacts.forEach(function (obj) {
-	      Actions.create(obj);
+	    var contacts = [];
+	    var api = "http://localhost:9000/api/v1/company";
+	    fetch(api).then(function (resp) {
+	      return resp.json();
+	    }).then(function (result) {
+
+	      contacts = result.list;
+	      console.log(contacts);
+	      if (contacts) {
+	        $("#none").hide();
+	        contacts.forEach(function (obj) {
+	          Actions.init(obj);
+	        });
+	      } else $("#none").show();
+
+	      $("#loading").hide();
 	    });
 	  }
 
@@ -19804,246 +19810,269 @@
 
 	var React = __webpack_require__(1);
 	var Actions = __webpack_require__(162);
-
+	var config = __webpack_require__(175);
 	var AddForm = React.createClass({
-		displayName: 'AddForm',
+	  displayName: 'AddForm',
 
 
-		getInitialState: function () {
-			return {
-				owners: [],
-				removedOwner: null
-			};
-		},
+	  getInitialState: function () {
+	    return {
+	      owners: [],
+	      removedOwner: null
+	    };
+	  },
 
-		_addOwner: function () {
-			var form = $('#_form');
-			var name = form.find('#owner_append').val();
-			form.find('#owner_append').val('');
-			if (name) {
-				this.state.owners.push({ name: name, id: Date.now() });
-				this.forceUpdate();
-			}
-		},
+	  _addOwner: function () {
+	    var form = $('#_form');
+	    var name = form.find('#owner_append').val();
+	    form.find('#owner_append').val('');
 
-		_removeOwner: function (o, e) {
-			e.preventDefault();
-			var idx = this.state.owners.indexOf(o);
-			if (idx != -1) {
-				delete this.state.owners[idx];
-				this.forceUpdate();
-			}
-		},
+	    var context = this;
+	    if (name) {
+	      fetch(config.apibase + '/owner', {
+	        method: 'POST',
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ name: name })
+	      }).then(function (ret) {
+	        return ret.json();
+	      }).then(function (json) {
+	        if (json.id) {
+	          context.state.owners.push({ name: name, id: json.id });
+	          context.state.owners = context.state.owners.filter(Boolean);
+	          context.forceUpdate();
+	        }
+	      });
+	    }
+	  },
 
-		render: function () {
-			var that = this;
-			return React.createElement(
-				'div',
-				{ id: '_modal', className: 'modal' },
-				React.createElement(
-					'form',
-					{ id: '_form', onSubmit: this._saveData },
-					React.createElement(
-						'div',
-						{ className: 'modal-content' },
-						React.createElement(
-							'h4',
-							null,
-							'Add New Company'
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-editor-format-textdirection-l-to-r prefix' }),
-							React.createElement('input', { id: 'company_name', type: 'text', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_prefix' },
-								'Company Name'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-communication-location-on prefix' }),
-							React.createElement('input', { id: 'company_address', type: 'text', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_prefix' },
-								'Company Address'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-maps-map prefix' }),
-							React.createElement('input', { id: 'company_city', type: 'text', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_prefix' },
-								'City'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-action-language prefix' }),
-							React.createElement('input', { id: 'company_country', type: 'text', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_prefix' },
-								'Country'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-communication-email prefix' }),
-							React.createElement('input', { id: 'company_email', type: 'email', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_email' },
-								'Email'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-communication-phone prefix' }),
-							React.createElement('input', { id: 'company_phone', type: 'tel', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'icon_telephone' },
-								'Phone'
-							)
-						),
-						React.createElement(
-							'div',
-							{ className: 'input-field' },
-							React.createElement('i', { className: 'mdi-action-account-circle prefix' }),
-							React.createElement('input', { id: 'owner_append', type: 'tel', className: 'validate' }),
-							React.createElement(
-								'label',
-								{ htmlFor: 'owner_append' },
-								'Add Owner'
-							),
-							React.createElement(
-								'a',
-								{ onClick: this._addOwner, className: 'right-done-button teal darken-1 waves-effect waves-circle waves-light btn-floating secondary-content' },
-								React.createElement('i', { className: 'mdi-action-done' })
-							),
-							React.createElement(
-								'div',
-								{ className: 'owners' },
-								this.state.owners.map(function (o) {
+	  _removeOwner: function (o, e) {
+	    e.preventDefault();
+	    var ctx = this;
+	    fetch(config.apibase + '/owner/' + o.id, { method: 'DELETE' }).then(function (ret) {
+	      return ret.json();
+	    }).then(function (json) {
+	      if (json && json === 'ok') {
+	        var idx = ctx.state.owners.indexOf(o);
+	        if (idx != -1) {
+	          delete ctx.state.owners[idx];
+	          ctx.state.owners = ctx.state.owners.filter(Boolean);
+	          ctx.forceUpdate();
+	        }
+	      }
+	    });
+	  },
 
-									return React.createElement(
-										'div',
-										{ className: 'chip', key: o.id },
-										o.name,
-										React.createElement(
-											'i',
-											{ className: 'material-icons', onClick: that._removeOwner.bind(null, o) },
-											'close'
-										)
-									);
-								}),
-								React.createElement(
-									'div',
-									{ className: 'right hint' },
-									'input and click done icon to append new owner'
-								)
-							)
-						)
-					),
-					React.createElement('input', { type: 'submit', className: 'hidden-btn' })
-				),
-				React.createElement(
-					'div',
-					{ className: 'modal-footer' },
-					React.createElement(
-						'a',
-						{ onClick: this._saveData,
-							className: 'waves-effect waves-green btn waves-effect waves-light ' },
-						'Save Company '
-					)
-				)
-			);
-		},
+	  render: function () {
+	    var that = this;
+	    return React.createElement(
+	      'div',
+	      { id: '_modal', className: 'modal' },
+	      React.createElement(
+	        'form',
+	        { id: '_form', onSubmit: this._saveData },
+	        React.createElement(
+	          'div',
+	          { className: 'modal-content' },
+	          React.createElement(
+	            'h4',
+	            null,
+	            'Add New Company'
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-editor-format-textdirection-l-to-r prefix' }),
+	            React.createElement('input', { id: 'company_name', type: 'text', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_prefix' },
+	              'Company Name'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-communication-location-on prefix' }),
+	            React.createElement('input', { id: 'company_address', type: 'text', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_prefix' },
+	              'Company Address'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-maps-map prefix' }),
+	            React.createElement('input', { id: 'company_city', type: 'text', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_prefix' },
+	              'City'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-action-language prefix' }),
+	            React.createElement('input', { id: 'company_country', type: 'text', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_prefix' },
+	              'Country'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-communication-email prefix' }),
+	            React.createElement('input', { id: 'company_email', type: 'email', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_email' },
+	              'Email'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-communication-phone prefix' }),
+	            React.createElement('input', { id: 'company_phone', type: 'tel', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'icon_telephone' },
+	              'Phone'
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'input-field' },
+	            React.createElement('i', { className: 'mdi-action-account-circle prefix' }),
+	            React.createElement('input', { id: 'owner_append', type: 'tel', className: 'validate' }),
+	            React.createElement(
+	              'label',
+	              { htmlFor: 'owner_append' },
+	              'Add Owner'
+	            ),
+	            React.createElement(
+	              'a',
+	              { onClick: this._addOwner, className: 'right-done-button teal darken-1 waves-effect waves-circle waves-light btn-floating secondary-content' },
+	              React.createElement('i', { className: 'mdi-action-done' })
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'owners' },
+	              this.state.owners.map(function (o) {
 
-		_saveData: function (e) {
-			e.preventDefault();
-			var data = {};
-			var form = $('#_form');
+	                return React.createElement(
+	                  'div',
+	                  { className: 'chip', key: o.id + Date.now() },
+	                  o.name,
+	                  React.createElement(
+	                    'a',
+	                    { className: 'chipbutton', onClick: that._removeOwner.bind(null, o) },
+	                    'x'
+	                  )
+	                );
+	              }),
+	              React.createElement(
+	                'div',
+	                { className: 'right hint' },
+	                'input and click done icon to append new owner'
+	              )
+	            )
+	          )
+	        ),
+	        React.createElement('input', { type: 'submit', className: 'hidden-btn' })
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'modal-footer' },
+	        React.createElement(
+	          'a',
+	          { onClick: this._saveData,
+	            className: 'waves-effect waves-green btn waves-effect waves-light ' },
+	          'Save Company '
+	        )
+	      )
+	    );
+	  },
 
-			// getting data from form
-			data.name = form.find('#company_name').val();
-			data.address = form.find('#company_address').val();
-			data.phone = form.find('#company_phone').val();
-			data.email = form.find('#company_email').val();
-			data.city = form.find('#company_city').val();
-			data.country = form.find('#company_country').val();
-			data.owner = this._owners();
-			data.id = Date.now();
-			var validated = false;
-			if (!data.name) {
-				Materialize.toast('Company name cannot be null', 2000);form.find('#company_name').focus();return;
-			}
-			if (!data.address) {
-				Materialize.toast('Company address cannot be null', 2000);form.find('#company_address').focus();return;
-			}
-			if (!data.city) {
-				Materialize.toast('Company city cannot be null', 2000);form.find('#company_city').focus();return;
-			}
-			if (!data.country) {
-				Materialize.toast('Company country cannot be null', 2000);form.find('#company_country').focus();return;
-			}
-			if (!data.owner) {
-				Materialize.toast('Company owner cannot be null', 2000);form.find('#owner_append').focus();return;
-			}
-			if (form.find('#company_email').hasClass("invalid")) {
-				Materialize.toast('Company email wrong format', 2000);form.find('#company_email').focus();return;
-			}
-			if (!this._isPhone(data.phone)) {
-				Materialize.toast('Company phone wrong format', 2000);form.find('#company_phone').focus();return;
-			}
+	  _saveData: function (e) {
+	    e.preventDefault();
+	    var data = {};
+	    var form = $('#_form');
 
-			validated = true;
-			if (validated) {
-				console.log(data);
-				Actions.create(data);
-				this._clearForm();
-			}
-		},
+	    // getting data from form
+	    data.name = form.find('#company_name').val();
+	    data.address = form.find('#company_address').val();
+	    data.phone = form.find('#company_phone').val();
+	    data.email = form.find('#company_email').val();
+	    data.city = form.find('#company_city').val();
+	    data.country = form.find('#company_country').val();
+	    data.owner = this._owners();
+	    var validated = false;
+	    if (!data.name) {
+	      Materialize.toast('Company name cannot be null', 2000);form.find('#company_name').focus();return;
+	    }
+	    if (!data.address) {
+	      Materialize.toast('Company address cannot be null', 2000);form.find('#company_address').focus();return;
+	    }
+	    if (!data.city) {
+	      Materialize.toast('Company city cannot be null', 2000);form.find('#company_city').focus();return;
+	    }
+	    if (!data.country) {
+	      Materialize.toast('Company country cannot be null', 2000);form.find('#company_country').focus();return;
+	    }
+	    if (!data.owner) {
+	      Materialize.toast('Company owner cannot be null', 2000);form.find('#owner_append').focus();return;
+	    }
+	    if (form.find('#company_email').hasClass("invalid")) {
+	      Materialize.toast('Company email wrong format', 2000);form.find('#company_email').focus();return;
+	    }
+	    if (!this._isPhone(data.phone)) {
+	      Materialize.toast('Company phone wrong format', 2000);form.find('#company_phone').focus();return;
+	    }
 
-		_isPhone: function (a) {
-			var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
-			if (filter.test(a) || !a) {
-				return true;
-			} else {
-				return false;
-			}
-		},
-		_owners: function () {
-			var result = '';
-			this.state.owners.forEach(function (o) {
-				result += o.name + ',' + o.id + ";";
-			});
-			return result;
-		},
+	    validated = true;
+	    if (validated) {
+	      console.log(data);
+	      Actions.create(data);
+	      this._clearForm();
+	    }
+	  },
 
-		_clearForm: function () {
-			var form = $('#_form');
+	  _isPhone: function (a) {
+	    var filter = /^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/;
+	    if (filter.test(a) || !a) {
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  },
+	  _owners: function () {
+	    var result = '';
+	    this.state.owners.forEach(function (o) {
+	      result += o.name + ',' + o.id + ";";
+	    });
+	    return result;
+	  },
 
-			form.find('#company_name').val('');
-			form.find('#company_address').val('');
-			form.find('#company_phone').val('');
-			form.find('#company_email').val('');
-			form.find('#company_city').val('');
-			form.find('#company_country').val('');
-			this.state.owners = [];
-			$('#_modal').closeModal();
-		}
+	  _clearForm: function () {
+	    var form = $('#_form');
+
+	    form.find('#company_name').val('');
+	    form.find('#company_address').val('');
+	    form.find('#company_phone').val('');
+	    form.find('#company_email').val('');
+	    form.find('#company_city').val('');
+	    form.find('#company_country').val('');
+	    this.state.owners = [];
+	    $('#_modal').closeModal();
+	  }
 	});
 
 	module.exports = AddForm;
@@ -20058,6 +20087,20 @@
 
 	var Actions = {
 
+	  init: function (contact) {
+	    AppDispatcher.dispatch({
+	      actionType: Constants._INIT,
+	      id: contact.id,
+	      address: contact.address,
+	      city: contact.city,
+	      country: contact.country,
+	      email: contact.email,
+	      phone: contact.phone,
+	      name: contact.name,
+	      owner: contact.owner
+	    });
+	  },
+
 	  create: function (contact) {
 	    AppDispatcher.dispatch({
 	      actionType: Constants._CREATE,
@@ -20066,6 +20109,7 @@
 	      city: contact.city,
 	      country: contact.country,
 	      email: contact.email,
+	      phone: contact.phone,
 	      name: contact.name,
 	      owner: contact.owner
 	    });
@@ -20081,6 +20125,7 @@
 	      city: contact.city,
 	      country: contact.country,
 	      email: contact.email,
+	      phone: contact.phone,
 	      name: contact.name,
 	      owner: contact.owner
 	    });
@@ -20096,6 +20141,7 @@
 	      city: contact.city,
 	      country: contact.country,
 	      email: contact.email,
+	      phone: contact.phone,
 	      name: contact.name,
 	      owner: contact.owner
 	    });
@@ -20522,6 +20568,7 @@
 
 	var React = __webpack_require__(1);
 	var Actions = __webpack_require__(162);
+	var config = __webpack_require__(175);
 
 	var EditForm = React.createClass({
 	  displayName: 'EditForm',
@@ -20531,7 +20578,8 @@
 	    return {
 	      owners: [],
 	      removedOwner: null,
-	      ctx: this
+	      ctx: this,
+	      editing: '0'
 	    };
 	  },
 
@@ -20539,21 +20587,43 @@
 	    var form = $('#edit_form');
 	    var name = form.find('#owner_append').val();
 	    form.find('#owner_append').val('');
+
+	    var context = this;
 	    if (name) {
-	      this.state.owners.push({ name: name, id: Date.now() });
-	      this.forceUpdate();
-	      this._save();
+	      fetch(config.apibase + '/owner', {
+	        method: 'POST',
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        },
+	        body: JSON.stringify({ name: name })
+	      }).then(function (ret) {
+	        return ret.json();
+	      }).then(function (json) {
+	        if (json.id) {
+	          context.state.owners.push({ name: name, id: json.id });
+	          context.state.owners = context.state.owners.filter(Boolean);
+	          context.forceUpdate();
+	        }
+	      });
 	    }
 	  },
 
 	  _removeOwner: function (o, e) {
-	    this.forceUpdate();
-
-	    var idx = this.state.owners.indexOf(o);
-	    if (idx != -1) {
-	      delete this.state.owners[idx];
-	      this._save();
-	    }
+	    e.preventDefault();
+	    var ctx = this;
+	    fetch(config.apibase + '/owner/' + o.id, { method: 'DELETE' }).then(function (ret) {
+	      return ret.json();
+	    }).then(function (json) {
+	      if (json && json === 'ok') {
+	        var idx = ctx.state.owners.indexOf(o);
+	        if (idx != -1) {
+	          delete ctx.state.owners[idx];
+	          ctx.state.owners = ctx.state.owners.filter(Boolean);
+	          ctx.forceUpdate();
+	        }
+	      }
+	    });
 	  },
 
 	  _owners: function () {
@@ -20565,7 +20635,11 @@
 	  },
 
 	  componentDidUpdate: function () {
-
+	    var id = $('#edit_form').find('#record_id').val();
+	    if (this.state.editing !== id) {
+	      this.state.owners = [];
+	      this.state.editing = id;
+	    }
 	    var form = $('#edit_form');
 
 	    var context = this;
@@ -20659,12 +20733,12 @@
 
 	                return React.createElement(
 	                  'div',
-	                  { className: 'chip', key: o.id },
+	                  { className: 'chip', key: o.id + Date.now() },
 	                  o.name,
 	                  React.createElement(
-	                    'i',
-	                    { key: o.id + 'i', className: 'material-icons', onClick: ctx._removeOwner.bind(null, o) },
-	                    'close'
+	                    'a',
+	                    { className: 'chipbutton', onClick: ctx._removeOwner.bind(null, o) },
+	                    'x'
 	                  )
 	                );
 	              }),
@@ -20768,9 +20842,11 @@
 	    form.find('#ownersdata').val('');
 	    var ctx = this;
 	    this.state.owners.map(function (o) {
-	      ctx.state.owners.splice(ctx.state.owners.indexOf(o), 1); // destroy
-	      ctx.forceUpdate();
+	      ctx.state.owners = []; //.splice( ctx.state.owners.indexOf(o),1);// destroy
 	    });
+
+	    this.state.owners = [];
+	    this.forceUpdate();
 	    $('#edit_modal').closeModal();
 	  }
 	});
@@ -20821,17 +20897,20 @@
 				React.createElement(
 					'span',
 					{ className: 'title' },
+					'CompanyName: ',
 					data.name
 				),
 				React.createElement(
 					'p',
 					null,
-					'Phone Number: ',
-					data.id,
+					'Address: ',
+					data.address,
 					' ',
 					React.createElement('br', null),
-					'Email: ',
-					data.email
+					'Region: ',
+					data.city,
+					' ',
+					data.country
 				),
 				React.createElement(
 					'a',
@@ -20858,19 +20937,17 @@
 	var EventEmitter = __webpack_require__(173).EventEmitter;
 	var Constants = __webpack_require__(167);
 	var assign = __webpack_require__(174);
+	var config = __webpack_require__(175);
 
 	var CHANGE_EVENT = 'change';
 
-	var _contacts = [];
+	var _contacts = {};
 	var _editContact = {};
 
 	// will be used to incremental id for contacts
 	var currentId = 0;
 
-	// saving new contact
-	function create(contact) {
-
-	  contact.id = Date.now();
+	function init(contact) {
 	  currentId = contact.id;
 	  _contacts[currentId] = {
 	    id: contact.id,
@@ -20878,9 +20955,46 @@
 	    city: contact.city,
 	    country: contact.country,
 	    email: contact.email,
+	    phone: contact.phone,
 	    name: contact.name,
 	    owner: contact.owner
 	  };
+	  ApiStub.emitChange();
+	}
+
+	function create(contact) {
+	  fetch(config.apibase + '/company', {
+	    method: 'POST',
+	    headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    body: JSON.stringify({
+	      address: contact.address,
+	      city: contact.city,
+	      country: contact.country,
+	      email: contact.email,
+	      phone: contact.phone,
+	      name: contact.name,
+	      owner: contact.owner
+	    }) }).then(function (rep) {
+	    return rep.json();
+	  }).then(function (ret) {
+	    if (ret.id) {
+	      currentId = ret.id;
+	      _contacts[currentId] = {
+	        id: ret.id,
+	        address: contact.address,
+	        city: contact.city,
+	        country: contact.country,
+	        email: contact.email,
+	        phone: contact.phone,
+	        name: contact.name,
+	        owner: contact.owner
+	      };
+	      ApiStub.emitChange();
+	    }
+	  });
 	}
 
 	// sending edit id to controller view
@@ -20891,31 +21005,61 @@
 	    city: contact.city,
 	    country: contact.country,
 	    email: contact.email,
+	    phone: contact.phone,
 	    name: contact.name,
 	    owner: contact.owner,
 	    editmode: true
 	  };
+	  ApiStub.emitChange();
 	}
 
-	// saving edited contact
 	function save(contact) {
-	  _contacts[contact.id] = {
-	    id: contact.id,
-	    address: contact.address,
-	    city: contact.city,
-	    country: contact.country,
-	    email: contact.email,
-	    name: contact.name,
-	    owner: contact.owner
+	  fetch(config.apibase + '/company', {
+	    method: 'PUT',
+	    headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    body: JSON.stringify({
+	      id: contact.id,
+	      address: contact.address,
+	      city: contact.city,
+	      country: contact.country,
+	      email: contact.email,
+	      phone: contact.phone,
+	      name: contact.name,
+	      owner: contact.owner
+	    }) }).then(function (rep) {
+	    return rep.json();
+	  }).then(function (ret) {
 
-	  };
+	    if (ret.id) {
+	      _contacts[contact.id] = {
+	        id: contact.id,
+	        address: contact.address,
+	        city: contact.city,
+	        country: contact.country,
+	        email: contact.email,
+	        phone: contact.phone,
+	        name: contact.name,
+	        owner: contact.owner
+	      };
+	      ApiStub.emitChange();
+	    }
+	  });
 	}
 
-	// removing contact by user
 	function remove(removeId) {
-	  if (_contacts.hasOwnProperty(removeId)) {
-	    delete _contacts[removeId];
-	  }
+	  fetch(config.apibase + '/company/' + removeId, { method: 'DELETE' }).then(function (ret) {
+	    return ret.json();
+	  }).then(function (json) {
+	    if (json && json === 'ok') {
+	      if (_contacts.hasOwnProperty(removeId)) {
+	        delete _contacts[removeId];
+	      }
+	      ApiStub.emitChange();
+	    }
+	  });
 	}
 
 	var ApiStub = assign({}, EventEmitter.prototype, {
@@ -20957,7 +21101,9 @@
 	        create(action);
 	      }
 	      break;
-
+	    case Constants._INIT:
+	      init(action);
+	      break;
 	    case Constants._EDIT:
 	      edit(action);
 	      break;
@@ -20973,7 +21119,6 @@
 	    default:
 	      break;
 	  }
-	  ApiStub.emitChange();
 	});
 
 	module.exports = ApiStub;
@@ -21324,6 +21469,20 @@
 		return to;
 	};
 
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	var apiversion = 'v1';
+	var serverDomain = 'http://localhost:9000';
+	var devServerDomain = 'http://localhost:9000';
+
+	var prod = false;
+
+	module.exports = {
+	    apibase: (prod ? serverDomain : devServerDomain) + "/api/" + apiversion
+	};
 
 /***/ }
 /******/ ]);

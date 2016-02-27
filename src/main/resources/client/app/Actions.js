@@ -4,6 +4,20 @@ var Constants = require('./Constants');
 
 var Actions = {
 
+  init: function(contact) {
+    AppDispatcher.dispatch({
+      actionType: Constants._INIT,
+      id     : contact.id         ,
+      address: contact.address	  ,
+      city	 : contact.city	      ,
+      country: contact.country	  ,
+      email	 : contact.email	    ,
+      phone  : contact.phone      ,
+      name	 : contact.name	      ,
+      owner: contact.owner
+    });
+  },
+
   create: function(contact) {
     AppDispatcher.dispatch({
       actionType: Constants._CREATE,
@@ -12,6 +26,7 @@ var Actions = {
       city	 : contact.city	      ,
       country: contact.country	  ,
       email	 : contact.email	    ,
+      phone  : contact.phone      ,
       name	 : contact.name	      ,
       owner: contact.owner
     });
@@ -26,7 +41,8 @@ var Actions = {
        address: contact.address	  ,
        city	 : contact.city	      ,
        country: contact.country	  ,
-       email	 : contact.email	    ,
+       email	 : contact.email	  ,
+       phone  : contact.phone      ,
        name	 : contact.name	      ,
        owner: contact.owner
     });
@@ -42,6 +58,7 @@ var Actions = {
       city	 : contact.city	      ,
       country: contact.country	  ,
       email	 : contact.email	    ,
+      phone  : contact.phone      ,
       name	 : contact.name	      ,
       owner: contact.owner
     });

@@ -1,5 +1,6 @@
 var React = require('react');
 var Actions = require('../Actions');
+var config = require('../config')
 
 var EditForm = React.createClass({
 
@@ -7,34 +8,53 @@ var EditForm = React.createClass({
    return{
     owners : [],
     removedOwner: null,
-    ctx :this
+    ctx :this,
+    editing: '0'
    }
   },
 
-  _addOwner:function(){
-  		var form = $('#edit_form');
-  	  var name = form.find('#owner_append').val();
-      form.find('#owner_append').val('');
-      if(name){
-        this.state.owners.push({name: name ,id:Date.now()});
-        this.forceUpdate();
-        this._save();
+    _addOwner:function(){
+    		var form = $('#edit_form');
+    	  var name = form.find('#owner_append').val();
+        form.find('#owner_append').val('');
 
-      }
+        var context = this;
+        if(name){
+          fetch(config.apibase + '/owner', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ name : name })
+              }).then(function(ret){
+                return ret.json();
+              }).then(function(json){
+                if(json.id){
+                    context.state.owners.push({name: name ,id: json.id});
+                    context.state.owners = context.state.owners.filter(Boolean);
+                    context.forceUpdate();
+                }
+              });
+        }
+    },
 
-
-  },
-
-  _removeOwner:function(o,e){
-      this.forceUpdate();
-
-      var idx = this.state.owners.indexOf(o)
-      if(idx!=-1){
-        delete this.state.owners[idx];
-        this._save();
-      }
-
-  },
+    _removeOwner:function(o,e){
+        e.preventDefault();
+        var ctx =this;
+        fetch(config.apibase + '/owner/'+o.id, { method: 'DELETE'} )
+        .then(function(ret){ return ret.json(); })
+        .then(function(json){
+          if(json && json ==='ok'){
+            var idx = ctx.state.owners.indexOf(o)
+            if(idx!=-1) {
+              delete ctx.state.owners[idx];
+              ctx.state.owners = ctx.state.owners.filter(Boolean);
+              ctx.forceUpdate();
+            }
+          }
+        });
+    },
 
   _owners:function(){
     var result = '';
@@ -45,8 +65,11 @@ var EditForm = React.createClass({
   },
 
   componentDidUpdate: function() {
-
-
+		  var id = $('#edit_form').find('#record_id').val();
+      if( this.state.editing !== id) {
+        this.state.owners = [];
+        this.state.editing = id;
+      }
       var form = $('#edit_form');
 
       var context = this;
@@ -129,8 +152,10 @@ var EditForm = React.createClass({
 
                this.state.owners.map(function(o){
 
-                    return <div className="chip" key={o.id}>{o.name}
-                    <i key={o.id+'i'} className="material-icons" onClick={ctx._removeOwner.bind(null, o)}>close</i></div>
+                    return <div className="chip" key={o.id+Date.now()}>{o.name}
+
+                                <a className="chipbutton" onClick={ctx._removeOwner.bind(null, o)}>x</a></div>
+
                     })
 
                }
@@ -168,7 +193,7 @@ var EditForm = React.createClass({
 
 		var data = {};
 		var form = $('#edit_form');
-		
+
 		// getting data from form
     		data.name =     form.find('#company_name').val();
     		data.address =  form.find('#company_address').val();
@@ -195,7 +220,7 @@ var EditForm = React.createClass({
 		//e.preventDefault();
 		var removeId = $('#edit_form').find('#record_id').val();
 
-		//sending to action 
+		//sending to action
 		Actions.remove(removeId);
 
 		this._clearForm();
@@ -216,9 +241,12 @@ var EditForm = React.createClass({
     form.find('#ownersdata').val('');
     var ctx = this;
     this.state.owners.map(function(o){
-      ctx.state.owners.splice( ctx.state.owners.indexOf(o),1);// destroy
-      ctx.forceUpdate();
+      ctx.state.owners = []//.splice( ctx.state.owners.indexOf(o),1);// destroy
     });
+
+
+    this.state.owners = []
+    this.forceUpdate();
 		$('#edit_modal').closeModal();
 	}
 });

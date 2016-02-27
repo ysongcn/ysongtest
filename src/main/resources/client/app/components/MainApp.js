@@ -16,6 +16,8 @@ function getContactsState() {
 var MainApp = React.createClass({
   getInitialState: function() {
     // load from server
+    $("#none").hide();
+    $("#loading").show();
 
     this._initializeContacts();
     return getContactsState();
@@ -55,6 +57,18 @@ var MainApp = React.createClass({
         <DataList data={this.state.allContacts}/>
         <AddForm />
         <EditForm editContact={this.state.editContact} />
+        <div id="loading" className="preloader-wrapper small active">
+              <div className="spinner-layer spinner-green-only">
+                <div className="circle-clipper left">
+                  <div className="circle"></div>
+                </div><div className="gap-patch">
+                <div className="circle"></div>
+              </div><div className="circle-clipper right">
+                <div clasclassNames="circle"></div>
+              </div>
+              </div>
+            </div>
+
       </ul>
     );
   },
@@ -64,50 +78,27 @@ var MainApp = React.createClass({
 
   },
   _initializeContacts: function() {
-    // loading imaginary contacts
-    // can also be loaded from a remote server
-    var contacts = [
-            {
-              id: 1,
-              name : 'Terrence S. Hatfield',
-              phone: '651-603-1723',
-              email: 'TerrenceSHatfield@rhyta.com'
-            },
-            {
-              id: 2,
-              name : 'Chris M. Manning',
-              phone: '513-307-5859',
-              email: 'ChrisMManning@dayrep.com'
-            },
-            {
-              id: 3,
-              name : 'Ricky M. Digiacomo',
-              phone: '918-774-0199',
-              email: 'RickyMDigiacomo@teleworm.us'
-            },
-            {
-              id: 4,
-              name : 'Michael K. Bayne',
-              phone: '702-989-5145',
-              email: 'MichaelKBayne@rhyta.com'
-            },
-            {
-              id: 5,
-              name : 'John I. Wilson',
-              phone: '318-292-6700',
-              email: 'JohnIWilson@dayrep.com'
-            },
-            {
-              id: 6,
-              name : 'Rodolfo P. Robinett',
-              phone: '803-557-9815',
-              email: 'RodolfoPRobinett@jourrapide.com'
-            }
-          ];
 
+
+    var contacts = [];
+    var api = "http://localhost:9000/api/v1/company";
+    fetch(api).then(function(resp){ return resp.json();}).then(function(result){
+
+      contacts = result.list;
+      console.log(contacts);
+      if(contacts){
+        $("#none").hide();
         contacts.forEach(function(obj) {
-        	Actions.create(obj);
+          Actions.init(obj);
         });
+        }
+      else
+        $("#none").show();
+
+       $("#loading").hide()
+    });
+
+
   }
 
 });

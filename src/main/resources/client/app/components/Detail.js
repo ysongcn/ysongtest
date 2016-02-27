@@ -6,9 +6,9 @@ var Detail = React.createClass({
 		var data = this.props.data;
 		return(
 			<li className="collection-item avatar">
-			<span className="title">{data.name}</span>
-			<p>Phone Number: {data.id} <br />
-			Email: {data.email}
+			<span className="title">CompanyName: {data.name}</span>
+			<p>Address: {data.address} <br />
+			Region: {data.city} {data.country}
 			</p>
 			<a href="#" onClick={this._openEditModal} className="secondary-content"><i className="mdi-editor-mode-edit"></i></a>
 			</li>

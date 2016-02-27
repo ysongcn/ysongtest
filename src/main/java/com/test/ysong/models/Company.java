@@ -2,6 +2,8 @@ package com.test.ysong.models;
 
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,6 +18,19 @@ import java.util.List;
 public class Company extends Model{
 
     public static final Finder<Long,Company> find = new Finder<>(Long.class, Company.class);
+
+    private String owner;//for client use
+    public String getOwner() {
+        StringBuffer sb = new StringBuffer();
+        owners.forEach((o)->{
+            sb.append(o.getName());
+            sb.append(",");
+            sb.append(o.getId());
+            sb.append(";");
+        });
+        owner = sb.toString();
+        return owner;
+    }
 
     @Id
     private Long id;
@@ -38,7 +53,8 @@ public class Company extends Model{
     @Column(nullable = true)
     private String phone;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company")
+    @JsonIgnore
     private List<Owner> owners;
 
     public Long getId() {

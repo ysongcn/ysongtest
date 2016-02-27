@@ -1,6 +1,6 @@
 var React = require('react');
 var Actions = require('../Actions');
-
+var config = require('../config')
 var AddForm = React.createClass({
 
  getInitialState : function(){
@@ -14,20 +14,43 @@ var AddForm = React.createClass({
   		var form = $('#_form');
   	  var name = form.find('#owner_append').val();
       form.find('#owner_append').val('');
-      if(name){
-        this.state.owners.push({name: name ,id: Date.now()});
-        this.forceUpdate();
-      }
 
+      var context = this;
+      if(name){
+        fetch(config.apibase + '/owner', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name : name })
+            }).then(function(ret){
+              return ret.json();
+            }).then(function(json){
+              if(json.id){
+                  context.state.owners.push({name: name ,id: json.id});
+                  context.state.owners = context.state.owners.filter(Boolean);
+                  context.forceUpdate();
+              }
+            });
+      }
   },
 
   _removeOwner:function(o,e){
       e.preventDefault();
-      var idx = this.state.owners.indexOf(o)
-      if(idx!=-1){
-        delete this.state.owners[idx];
-        this.forceUpdate();
-      }
+      var ctx =this;
+      fetch(config.apibase + '/owner/'+o.id, { method: 'DELETE'} )
+      .then(function(ret){ return ret.json(); })
+      .then(function(json){
+        if(json && json ==='ok'){
+          var idx = ctx.state.owners.indexOf(o)
+          if(idx!=-1) {
+            delete ctx.state.owners[idx];
+            ctx.state.owners = ctx.state.owners.filter(Boolean);
+            ctx.forceUpdate();
+          }
+        }
+      });
   },
 
 	render:function() {
@@ -89,8 +112,8 @@ var AddForm = React.createClass({
 
             {this.state.owners.map(function(o){
 
-            return <div className="chip" key={o.id}>{o.name}
-            <i className="material-icons" onClick={that._removeOwner.bind(null, o)}>close</i></div>
+            return <div className="chip" key={o.id+Date.now()}>{o.name}
+            <a className="chipbutton" onClick={that._removeOwner.bind(null, o)}>x</a></div>
 
             })}
 
@@ -125,7 +148,6 @@ var AddForm = React.createClass({
 		data.city =     form.find('#company_city').val();
 		data.country =  form.find('#company_country').val();
 		data.owner = this._owners();
-    data.id =  Date.now();
     var validated = false;
     if(!data.name    ){ Materialize.toast('Company name cannot be null', 2000);form.find('#company_name').focus();return;}
     if(!data.address ){ Materialize.toast('Company address cannot be null', 2000);form.find('#company_address').focus();return;}

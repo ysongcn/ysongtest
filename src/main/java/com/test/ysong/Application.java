@@ -18,7 +18,7 @@ import static spark.Spark.post;
  */
 public class Application {
     private static Logger log = Logger.getGlobal();
-    private static String apiVersion = "v1";
+    private static String apiVersion = "/api/v1";
 
     public static void main(String[] args) {
         //web server settings
@@ -42,27 +42,31 @@ public class Application {
             log.warning("Db migration fall");
     }
 
-    public static final ResponseTransformer isJson = new ResponseTransformer() {
+    public static final ResponseTransformer withJsonFormat = new ResponseTransformer() {
         public String render(Object o) throws Exception {
             return new ObjectMapper().writeValueAsString(o);
         }
     };
 
-    private static void api() {
-        get("/company",          CompanyApi::get    );
-        get("/company/:id",      CompanyApi::get    );
-        post("/company",         CompanyApi::post   );
-        put("/company",          CompanyApi::put    );
-        delete("/company",       CompanyApi::delete );
 
-        get("/owner",            OwnerApi::all      );
-        post("/owner",           OwnerApi::post     );
-        delete("/owner",         OwnerApi::delete   );
+
+
+    private static void api() {
+        get(apiVersion + "/company"         , "application/json", CompanyApi::get    , withJsonFormat);
+        get(apiVersion + "/company/:id"     , "application/json", CompanyApi::get    , withJsonFormat);
+        post(apiVersion + "/company"        , "application/json", CompanyApi::post   , withJsonFormat);
+        put(apiVersion + "/company"         , "application/json", CompanyApi::put    , withJsonFormat);
+        delete(apiVersion + "/company/:id"  , "application/json", CompanyApi::delete , withJsonFormat);
+
+        get(apiVersion + "/owner/:id"           , "application/json", OwnerApi::all      , withJsonFormat);
+        post(apiVersion + "/owner"              , "application/json", OwnerApi::post     , withJsonFormat);
+        delete(apiVersion + "/owner/:id"        , "application/json", OwnerApi::delete   , withJsonFormat);
     }
 
     private static void site() {
         Configuration c = new Configuration();
         c.setClassForTemplateLoading(Application.class, "/client/public");
         FreeMarkerEngine isWeb = new FreeMarkerEngine(c);
+        // for now nothing
     }
 }

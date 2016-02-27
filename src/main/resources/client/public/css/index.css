@@ -48,3 +48,19 @@ position: absolute;
 .toast{
   background:#F35252;
 }
+
+#loading{
+  margin: 40px;
+  left: 40%;
+}
+
+#none{
+  margin: 40px;
+  left: 40%;
+}
+
+.chipbutton{
+  padding: 3px 12px;
+  padding-right: 2px;
+  cursor: pointer;
+}
