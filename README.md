@@ -1,6 +1,6 @@
 # [ysongtest]() 
 A demo project which using sparkjava+React.js + PgSQL+ ebean.
-## Run and deployment:
+
 ### Requirement
 - [heroku](http://heroku.com) account
 - [toolbelt](https://toolbelt.heroku.com/)
