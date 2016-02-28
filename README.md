@@ -24,7 +24,12 @@ if your dont have webpack installed, using this command
 `heroku create ysongtest`
 
 `mvn heroku:deploy`
+ 
+if you have a `add-on plan` account, you should add a scheduler to prevent the web into idle state. that cause the java process restart.
 
+`heroku addons:create scheduler`
+
+set scheduler to `curl https://your-app.heroku.com/` in dashboard set FREQUENCY to Hourly, that's enough.
 
 ### API test
 
