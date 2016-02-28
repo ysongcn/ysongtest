@@ -25,7 +25,7 @@ if your dont have webpack installed, using this command
 
 `mvn heroku:deploy`
  
-if you have a `add-on plan` account, you should add a scheduler to prevent the web into idle state. that cause the java process restart.
+if you have a `add-on available` account, you should add a scheduler to prevent the web into idle state. that cause the java process restart.
 
 Login to heroku dashboard ,add a scheduler add-on for your web Dyno and  set scheduler job to `curl https://your-app.heroku.com/` then set FREQUENCY to Hourly, that's enough.
 
