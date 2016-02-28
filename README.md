@@ -29,7 +29,7 @@ if you have a `add-on plan` account, you should add a scheduler to prevent the w
 
 `heroku addons:create scheduler`
 
-set scheduler to `curl https://your-app.heroku.com/` in dashboard set FREQUENCY to Hourly, that's enough.
+then goto heroku dashboard set scheduler to `curl https://your-app.heroku.com/` and set FREQUENCY to Hourly, that's enough.
 
 ### API test
 
