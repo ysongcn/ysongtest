@@ -45,7 +45,7 @@ all avaliabel APIs
 | /api/(v1)/owner      |   POST  | Add a owner             |
 | /api/(v1)/owner/:id  |   DELETE| Remove a owner          |
 
-Test using curl:
+#### Test using curl:
 
 *get all companys*
 
@@ -70,14 +70,12 @@ Test using curl:
 
 `curl -X POST -H "Content-Type: application/json" 
   -d '{	address: "test address",
-		city: "test city",
-		country: "test country",
-		email: "test@some.com",
-		name: "test company",
-		owner: "ysong,1;andy,2;",
-		phone: "13300000000"
-		}'
-  https://ysongtest.herokuapp.com/api/v1/company`
+	city: "test city",
+	country: "test country",
+	email: "test@some.com",
+	name: "test company",
+	owner: "ysong,1;andy,2;",
+	phone: "13300000000"}' https://ysongtest.herokuapp.com/api/v1/company`
   
   
   
@@ -86,17 +84,14 @@ Test using curl:
 `curl -X DELETE -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
 
 
-
 *update a company*
 
 `curl -X PUT -H "Content-Type: application/json" 
   -d '{	id:"1",
-    address: "test address",
-		city: "test city",
-		country: "test country",
-		email: "test@some.com",
-		name: "test company",
-		owner: "ysong,1;andy,2;",
-		phone: "13300000000"
-		}'
-  https://ysongtest.herokuapp.com/api/v1/company`
+        address: "test address",
+	city: "test city",
+	country: "test country",
+	email: "test@some.com",
+	name: "test company",
+	owner: "ysong,1;andy,2;",
+	phone: "13300000000"}' https://ysongtest.herokuapp.com/api/v1/company`
