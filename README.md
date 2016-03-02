@@ -33,7 +33,7 @@ Login to heroku dashboard ,add a scheduler add-on for your web Dyno and  set sch
 
 ### API test
 
-all avaliabel APIs
+#### All avaliabel APIs
 
 |   RESOURCE           |  METHOD |  DESCIPTION             |
 |----------------------|---------|-------------------------|
