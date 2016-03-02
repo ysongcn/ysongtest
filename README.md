@@ -25,7 +25,7 @@ if your dont have webpack installed, using this command
 
 `mvn heroku:deploy`
  
-NOTICE: Use `java -cp "./target/classes:./target/dependency/*"  com.test.ysong.Application` as main command to ensure ebean find the models from class, if without models jar file set.
+NOTICE: Use `java -cp "./target/classes:./target/dependency/*"  com.test.ysong.Application` as main command to ensure ebean find the models from class files, if without models jar file set.
 
 if you have a `add-on available` account, you should add a scheduler to prevent the web into idle state -- that cause the java process restart.
 
