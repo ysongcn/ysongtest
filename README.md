@@ -58,7 +58,7 @@ Test using curl:
 
 *create a owner*
 
-`curl -X POST  -H "Content-Type: application/json" -d '{ "name" : "ysong" }' https://ysongtest.herokuapp.com/api/v1/owner`
+`curl -X POST  -H "Content-Type: application/json" -d '{ "name":"ysong" }' https://ysongtest.herokuapp.com/api/v1/owner`
 
 
 *remove a owner*
