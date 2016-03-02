@@ -56,6 +56,9 @@ Test using curl:
 
 `curl -X GET  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
 
+*create a owner data*
+`curl -X POST  -H "Content-Type: application/json" -d '{ "name" : "ysong" } ' https://ysongtest.herokuapp.com/api/v1/owner`
+
 
 *create a company*
 
