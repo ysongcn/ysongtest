@@ -54,16 +54,16 @@ Test using curl:
 
 *get one company detail*
 
-`curl -X GET  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
+`curl -X GET -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
 
 *create a owner*
 
-`curl -X POST  -H "Content-Type: application/json" -d '{ "name":"ysong" }' https://ysongtest.herokuapp.com/api/v1/owner`
+`curl -X POST -H "Content-Type: application/json" -d '{ "name":"ysong" }' https://ysongtest.herokuapp.com/api/v1/owner`
 
 
 *remove a owner*
 
-`curl -X DELETE  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/owner/1`
+`curl -X DELETE -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/owner/1`
 
 
 *create a company*
@@ -83,7 +83,7 @@ Test using curl:
   
 *remove a company*
 
-`curl -X DELETE  -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
+`curl -X DELETE -H "Content-Type: application/json" https://ysongtest.herokuapp.com/api/v1/company/1`
 
 
 
